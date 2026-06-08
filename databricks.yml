@@ -1,0 +1,23 @@
+bundle:
+  name: adobe-data-marketplace
+
+resources:
+  apps:
+    adobe-data-marketplace:
+      name: adobe-data-marketplace
+      description: Adobe Internal Data Marketplace — federated data product catalog and access requests
+      source_code_path: .
+
+      user_api_scopes:
+        - sql
+
+      resources:
+        - name: sql-warehouse
+          sql_warehouse:
+            id: "<YOUR_SQL_WAREHOUSE_ID>"
+            permission: CAN_USE
+
+targets:
+  dev:
+    default: true
+    mode: development
