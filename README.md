@@ -28,6 +28,11 @@ npm install
 npm run dev
 ```
 
+If `bunx` is not installed, run `npx vite` instead.
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+
 Vite proxies `/api` to `http://localhost:8000`.
 
 ### Build for deployment
