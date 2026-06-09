@@ -1,6 +1,4 @@
 import { Link, useLocation } from "react-router-dom";
-import { Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { usePendingRequestCount, useUser } from "@/hooks/useMarketplace";
 
 export function AppNavbar() {
@@ -52,10 +50,6 @@ export function AppNavbar() {
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Sparkles className="h-4 w-4" />
-            Ask Genie
-          </Button>
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EB1000] text-xs font-semibold text-white">
             {user?.initials ?? "U"}
           </div>
