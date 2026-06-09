@@ -2,6 +2,12 @@
 
 Federated data product catalog and access request workflow, deployed as a Databricks App.
 
+## MVP scope
+
+- Browse and search the data product catalog
+- View product details and metadata
+- Submit and track access requests
+
 ## Stack
 
 - **Frontend**: React, TypeScript, Tailwind CSS, Shadcn UI
