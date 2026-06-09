@@ -1,0 +1,71 @@
+---
+description: Tech stack, product scope, and engineering constraints for Adobe Internal Data Marketplace
+alwaysApply: true
+---
+
+# Adobe Internal Data Marketplace — Project Constraints
+
+## Tech Stack
+
+**Frontend** (`client/`): React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui, TanStack React Query, React Router v6, Lucide icons.
+
+**Backend** (`server/`): Python, FastAPI, Pydantic v2, SQLAlchemy 2.0 + `databricks-sqlalchemy`, Databricks SDK, Uvicorn.
+
+**Infrastructure**: Databricks Apps + DABs (`databricks.yml`, `app.yaml`), SQL Warehouse, Unity Catalog (`governance.marketplace`, `governance.published_catalog`).
+
+Do not introduce alternate frameworks (Next.js, Django, Prisma, Redux, etc.) without explicit approval.
+
+## Product Constraints
+
+- **Purpose**: Federated internal data product catalog for Adobe employees — discover governed data products and submit access requests to domain teams.
+- **Architecture pattern**: Data mesh — domain-owned products (Finance, HR, Marketing, Operations); Unity Catalog is the source of truth for technical metadata.
+- **MVP scope (in)**: Catalog browse/search/filter, product detail, submit access request, My Requests page.
+- **MVP scope (out)**: Domain-team approval inbox, notifications, Genie integration (stub only), RBAC for approvers, automated UC grants.
+- **Catalog data**: Mock products in `server/data/mock_products.py` for local dev; target is published UC schema `governance.published_catalog.products`.
+- **Request workflow**: Persist to Delta table `governance.marketplace.access_requests` with status `pending` on create.
+- **Branding**: "Adobe Internal Data Marketplace" — not "Native GDAI".
+
+## Engineering Constraints
+
+### Databricks App deployment
+
+- Single FastAPI process serves `/api/*` and the React SPA from `client/build/` (no separate frontend server in production).
+- Bind to `0.0.0.0:${DATABRICKS_APP_PORT}`.
+- App name ≤ 26 chars: `adobe-data-marketplace`.
+- Enable OBO SQL access via `user_authorization.scopes: [sql]` in `app.yaml`.
+
+### Auth and data access
+
+- Read user identity from `x-forwarded-access-token` (OBO); use stub user only for local dev.
+- Catalog reads must respect UC grants via OBO token — users see only products they are permitted to access.
+- Requests: SQL Warehouse + SQLAlchemy against UC Delta; fall back to in-memory store only when warehouse is unavailable (local dev).
+
+### Backend structure
+
+Follow layered design — do not bypass it:
+
+```
+routers/ → services/ → models/ + db/ + data/
+```
+
+- Routers: HTTP only (params, headers, responses).
+- Services: business logic (`ProductService`, `RequestService`).
+- Keep Pydantic API models and SQLAlchemy ORM models aligned with `client/src/types/index.ts`.
+
+### Frontend conventions
+
+- Server state via TanStack Query hooks in `client/src/hooks/` — no ad hoc fetch in components.
+- Reuse shadcn/ui primitives (`Card`, `Badge`, `Button`, `Input`, `Checkbox`, `Select`, `Table`).
+- Domain colors: Finance=blue, HR=green, Marketing=red, Operations=purple.
+
+### Local development
+
+- Backend: `uvicorn server.app:app --reload --port 8000`
+- Frontend: `cd client && npm run dev` (Vite proxies `/api` to `:8000`)
+- Build before deploy: `cd client && npm run build`
+
+### Change discipline
+
+- Minimize scope — match existing patterns from `claude-databricks-app-template`.
+- Do not edit `docs/design.md` unless explicitly asked.
+- Phase 2 work (live UC catalog sync, approvals, Genie) belongs behind env flags or separate tasks — do not expand MVP scope silently.
