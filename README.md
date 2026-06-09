@@ -2,11 +2,17 @@
 
 Federated data product catalog and access request workflow, deployed as a Databricks App.
 
+## MVP scope
+
+- Browse and search the data product catalog
+- View product details and metadata
+- Submit and track access requests
+
 ## Stack
 
 - **Frontend**: React, TypeScript, Tailwind CSS, Shadcn UI
 - **Backend**: Python, FastAPI, SQLAlchemy
-- **Metadata (MVP)**: Mock product catalog
+- **Metadata (MVP)**: Mock product catalog (`server/data/mock_products.py`)
 - **Requests**: Unity Catalog Delta table `governance.marketplace.access_requests`
 
 ## Local development

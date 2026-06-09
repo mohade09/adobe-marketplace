@@ -16,7 +16,7 @@ export function AppNavbar() {
             </div>
             <div className="h-5 w-px bg-gray-200" />
             <span className="text-sm font-semibold text-gray-900">
-              Adobe Data Marketplace
+              Adobe Internal Data Marketplace
             </span>
           </div>
           <nav className="flex items-center gap-6 text-sm">
